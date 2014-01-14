@@ -1,0 +1,13 @@
+common: &common
+  adapter: postgresql
+  username: postgres
+  host: localhost
+  pool: 5
+
+development:
+  <<: *common
+  database: APP_NAME_dev
+
+test:
+  <<: *common
+  database: APP_NAME_test
