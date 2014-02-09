@@ -115,6 +115,7 @@ application "config.sass.preferred_syntax = :sass"
 
 # generate default controller and set root path
 generate 'controller', 'Home index'
+gsub_file 'config/routes.rb', /get "home\/index"/, 'root to: "home#index"'
 
 copy_file 'vagrant/Vagrantfile', 'Vagrantfile'
 empty_directory 'vagrant'
