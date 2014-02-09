@@ -12,9 +12,14 @@ inject_into_file "Gemfile", "ruby '#{RUBY_VERSION}'\n", after: "source 'https://
 # rails-i18n and default locale
 inject_into_file "Gemfile", "gem 'rails-i18n'\n",
   after: "gem 'rails', '#{Rails::VERSION::STRING}'\n"
+
 gsub_file 'config/application.rb',
   /# config\.i18n\.default_locale = :de/,
   'config.i18n.default_locale = "pt-BR"'
+
+gsub_file 'config/application.rb',
+  /# config\.time_zone = 'Central Time \(US & Canada\)'/,
+  'config.time_zone = "Brasilia"'
 
 def add_javascript_library(name)
   inject_into_file 'app/assets/javascripts/application.js',
