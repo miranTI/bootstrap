@@ -121,7 +121,9 @@ copy_file 'vagrant/Vagrantfile', 'Vagrantfile'
 gsub_file 'Vagrantfile', /APP_NAME/, app_name.underscore
 
 empty_directory 'vagrant'
-copy_file 'vagrant/recipes/postgres.sh', 'vagrant/postgres.sh'
+[:github, :postgres].each {|recipe|
+  copy_file "vagrant/recipes/#{recipe}.sh", "vagrant/#{recipe}.sh"
+}
 run 'vagrant up'
 
 rake 'db:create'
