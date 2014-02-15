@@ -67,7 +67,8 @@ copy_file 'config/database/postgresql.yml', 'config/database.yml'
 gsub_file 'config/database.yml', /APP_NAME/, app_name.underscore
 
 # Heroku setup
-if yes? "Would you like to deploy to Heroku?"
+deploy_to_heroku = yes? "Would you like to deploy to Heroku?"
+if deploy_to_heroku
   inject_into_file "Gemfile", %{
 # https://devcenter.heroku.com/articles/rails-integration-gems
 gem 'rails_12factor'
@@ -133,3 +134,15 @@ rake 'minitest:all:quick'
 git :init
 git add: "."
 git commit: '-m "First commit!"'
+
+if deploy_to_heroku
+  app = "#{app_name.downcase}"
+  worker = "#{app}-worker"
+  run "heroku apps:create #{app}"
+  run "heroku apps:create #{worker} --remote worker"
+  %w{heroku worker}.each {|env| run "git push #{env} master" }
+
+  run "url=$(heroku config --app #{app} | grep DATABASE_URL | sed 's/^.*postgres/postgres/') ; heroku config:add DATABASE_URL=$url --app #{worker} "
+  run "heroku ps:scale web=1 worker=0 --app #{app}"
+  run "heroku ps:scale web=0 worker=1 --app #{worker}"
+end
