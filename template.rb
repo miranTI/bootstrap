@@ -118,6 +118,8 @@ generate 'controller', 'Home index'
 gsub_file 'config/routes.rb', /get "home\/index"/, 'root to: "home#index"'
 
 copy_file 'vagrant/Vagrantfile', 'Vagrantfile'
+gsub_file 'Vagrantfile', /APP_NAME/, app_name.underscore
+
 empty_directory 'vagrant'
 copy_file 'vagrant/recipes/postgres.sh', 'vagrant/postgres.sh'
 run 'vagrant up'
