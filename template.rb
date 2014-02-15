@@ -56,21 +56,22 @@ gems_to_comment << 'turbolinks'
 gsub_file 'app/views/layouts/application.html.erb', /, "data-turbolinks-track" => true/, ''
 gsub_file 'app/assets/javascripts/application.js', /\/\/= require turbolinks\n/, ''
 
+# PG as default database
+gems_to_comment << 'sqlite3'
+inject_into_file "Gemfile", %{
+# deploy to a postgres database
+gem 'pg'
+}, after: "gem 'rails-i18n'\n"
+remove_file 'config/database.yml'
+copy_file 'config/database/postgresql.yml', 'config/database.yml'
+gsub_file 'config/database.yml', /APP_NAME/, app_name.underscore
+
 # Heroku setup
 if yes? "Would you like to deploy to Heroku?"
-  gems_to_comment << 'sqlite3'
-
   inject_into_file "Gemfile", %{
-# deploy to a postgres database on heroku
-gem 'pg'
-
 # https://devcenter.heroku.com/articles/rails-integration-gems
 gem 'rails_12factor'
 }, after: "gem 'rails-i18n'\n"
-
-  remove_file 'config/database.yml'
-  copy_file 'config/database/postgresql.yml', 'config/database.yml'
-  gsub_file 'config/database.yml', /APP_NAME/, app_name.underscore
 end
 
 # comments out disabled gems
