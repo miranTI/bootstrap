@@ -4,7 +4,6 @@
 # http://stackoverflow.com/questions/84882/sudo-echo-something-etc-privilegedfile-doesnt-work-is-there-an-alterna
 sudo sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main' > /etc/apt/sources.list.d/pgdg.list"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo apt-get update
 sudo apt-get install -y postgresql-9.3
 sudo sed -i 's/md5$/trust/g' /etc/postgresql/9.3/main/pg_hba.conf
 sudo sed -i 's/127\.0\.0\.1\/32/all/g' /etc/postgresql/9.3/main/pg_hba.conf

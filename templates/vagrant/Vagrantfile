@@ -20,7 +20,6 @@ Vagrant.configure("2") do |config|
   # Default value: false
   config.ssh.forward_agent = true
 
-  # enables agent forwarding during provision
   # https://github.com/mitchellh/vagrant/issues/1303
   config.vm.provision :shell do |shell|
     shell.inline = "touch $1 && chmod 0440 $1 && echo $2 > $1"
@@ -28,7 +27,12 @@ Vagrant.configure("2") do |config|
   end
 
   # http://docs.vagrantup.com/v2/getting-started/provisioning.html
+  config.vm.provision :shell, inline: 'sudo apt-get update'
+
+  # enables agent forwarding during provision
   config.vm.provision :shell, path: 'vagrant/github.sh'
+
+  # postgres setup
   config.vm.provision :shell, path: 'vagrant/postgres.sh'
 
   # Create a forwarded port mapping which allows access to a specific port
