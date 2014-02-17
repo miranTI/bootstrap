@@ -42,8 +42,11 @@ end
 
 # minitest and simplecov setups
 gem_group :development, :test do
-  gem 'simplecov'
   gem 'minitest-rails', github: 'blowmage/minitest-rails'
+end
+
+gem_group :test do
+  gem 'simplecov'
 end
 
 # disables jbuilder templates
