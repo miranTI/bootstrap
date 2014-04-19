@@ -33,8 +33,8 @@ create_file 'app/assets/stylesheets/imports.css.sass'
 # Sass Bootstrap
 if yes? 'Would you like to use Sass-Bootstrap?'
   inject_into_file "Gemfile",
-    "gem 'bootstrap-sass', '~> 2.3'\n",
-    after: "gem 'sass-rails', '~> 4.0.0'\n"
+    "gem 'bootstrap-sass', '~> 3.1.1'\n",
+    after: "gem 'sass-rails', '~> 4.0.3'\n"
 
   add_javascript_library :bootstrap
   append_to_file 'app/assets/stylesheets/imports.css.sass', "@import 'bootstrap'"
