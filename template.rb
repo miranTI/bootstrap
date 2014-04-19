@@ -109,7 +109,7 @@ gsub_file 'test/test_helper.rb', /\w*(fixtures :all)/, '# \1'
 # Configures generators to use minitest and disables unused assets/helpers
 application %{
     config.generators do |g|
-      g.test_framework :mini_test, spec: true
+      g.test_framework :minitest, spec: true
       g.assets false
       g.helper false
     end
