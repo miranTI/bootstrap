@@ -75,6 +75,14 @@ if deploy_to_heroku
   inject_into_file "Gemfile", %{
 # https://devcenter.heroku.com/articles/rails-integration-gems
 gem 'rails_12factor'
+
+# Use unicorn as the app server
+# https://devcenter.heroku.com/articles/dynos
+# https://devcenter.heroku.com/articles/rails-unicorn
+gem 'unicorn'
+
+# http://stackoverflow.com/questions/15858887/how-can-i-use-unicorn-as-rails-s
+gem 'rack-handlers'
 }, after: "gem 'rails-i18n'\n"
 end
 
