@@ -2,13 +2,13 @@
 
 # http://www.postgresql.org/download/linux/ubuntu/
 # http://stackoverflow.com/questions/84882/sudo-echo-something-etc-privilegedfile-doesnt-work-is-there-an-alterna
-sudo sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main' > /etc/apt/sources.list.d/pgdg.list"
+sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main' > /etc/apt/sources.list.d/pgdg.list"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo apt-get install -y postgresql-9.3
-sudo sed -i 's/md5$/trust/g' /etc/postgresql/9.3/main/pg_hba.conf
-sudo sed -i 's/127\.0\.0\.1\/32/all/g' /etc/postgresql/9.3/main/pg_hba.conf
-sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/9.3/main/postgresql.conf
-sudo /etc/init.d/postgresql restart
+apt-get install -y postgresql-9.1
+sed -i 's/md5$/trust/g' /etc/postgresql/9.1/main/pg_hba.conf
+sed -i 's/127\.0\.0\.1\/32/all/g' /etc/postgresql/9.1/main/pg_hba.conf
+sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/9.1/main/postgresql.conf
+/etc/init.d/postgresql restart
 
 # The chosen LC_CTYPE setting requires encoding "LATIN1" error
 # http://ezekielbinion.com/blog/making-rake-dbcreate-postgres-behave/
