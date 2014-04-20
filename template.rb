@@ -72,6 +72,9 @@ gsub_file 'config/database.yml', /APP_NAME/, app_name.underscore
 # Heroku setup
 deploy_to_heroku = yes? "Would you like to deploy to Heroku?"
 if deploy_to_heroku
+  copy_file 'config/unicorn.rb', 'config/unicorn.rb'
+  copy_file 'config/Procfile', 'Procfile'
+
   inject_into_file "Gemfile", %{
 # https://devcenter.heroku.com/articles/rails-integration-gems
 gem 'rails_12factor'
