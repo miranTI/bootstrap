@@ -4,6 +4,7 @@ append_to_file '.gitignore', %{
 coverage
 .DS_Store
 .vagrant
+*~
 }
 
 # ruby version at Gemfile
