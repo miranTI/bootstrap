@@ -1,6 +1,6 @@
 # https://devcenter.heroku.com/articles/rails-unicorn
 worker_processes Integer(ENV["WEB_CONCURRENCY"] || 4)
-timeout Rails.env.development? ? 100000 : 25
+timeout ENV['RAILS_ENV'] == 'development' ? 100000 : 25
 preload_app true
 
 before_fork do |server, worker|
