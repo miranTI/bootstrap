@@ -57,7 +57,7 @@ gems_to_comment = %w{jbuilder}
 gems_to_comment << 'turbolinks'
 
 # comment out turbolinks from layout
-gsub_file 'app/views/layouts/application.html.erb', /, "data-turbolinks-track" => true/, ''
+gsub_file 'app/views/layouts/application.html.erb', /, 'data-turbolinks-track' => true/, ''
 gsub_file 'app/assets/javascripts/application.js', /\/\/= require turbolinks\n/, ''
 
 # PG as default database
