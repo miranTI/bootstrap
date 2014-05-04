@@ -102,7 +102,7 @@ run 'bundle install'
 def run_bundle ; end
 
 # Generates MiniTests
-generate 'mini_test:install'
+generate 'minitest:install'
 
 prepend_to_file 'test/test_helper.rb', %{require 'simplecov'
 SimpleCov.start :rails do
