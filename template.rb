@@ -87,7 +87,7 @@ if deploy_to_heroku
 gem 'rack-handlers'
 
 # https://devcenter.heroku.com/articles/rails-integration-gems
-gem 'rails_12factor'
+gem 'rails_12factor', group: :production
 }, after: "gem 'unicorn'\n"
 end
 
