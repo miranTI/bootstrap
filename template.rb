@@ -111,13 +111,6 @@ end
 
 }
 
-# instantiated fixtures
-inject_into_file 'test/test_helper.rb',
-  "  self.use_instantiated_fixtures = true\n",
-  after: "fixtures :all\n"
-
-gsub_file 'test/test_helper.rb', /\w*(fixtures :all)/, '# \1'
-
 # Configures generators to use minitest and disables unused assets/helpers
 application %{
     config.generators do |g|
