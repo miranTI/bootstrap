@@ -77,17 +77,18 @@ if deploy_to_heroku
   copy_file 'config/Procfile', 'Procfile'
 
   inject_into_file "Gemfile", %{
-# https://devcenter.heroku.com/articles/rails-integration-gems
-gem 'rails_12factor'
-
-# Use unicorn as the app server
 # https://devcenter.heroku.com/articles/dynos
-# https://devcenter.heroku.com/articles/rails-unicorn
-gem 'unicorn'
+# https://devcenter.heroku.com/articles/rails-unicorn}, after: "# Use unicorn as the app server"
 
+  gsub_file 'Gemfile', /# gem 'unicorn'/, "gem 'unicorn'"
+
+  inject_into_file "Gemfile", %{
 # http://stackoverflow.com/questions/15858887/how-can-i-use-unicorn-as-rails-s
 gem 'rack-handlers'
-}, after: "gem 'rails-i18n'\n"
+
+# https://devcenter.heroku.com/articles/rails-integration-gems
+gem 'rails_12factor'
+}, after: "gem 'unicorn'\n"
 end
 
 # comments out disabled gems
