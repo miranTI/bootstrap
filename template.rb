@@ -8,7 +8,7 @@ coverage
 }
 
 # ruby version at Gemfile
-inject_into_file "Gemfile", "ruby '#{RUBY_VERSION}'\n", after: "source 'https://rubygems.org'\n"
+inject_into_file "Gemfile", "ruby '#{RUBY_VERSION}'", after: "source 'https://rubygems.org'\n"
 
 # rails-i18n and default locale
 inject_into_file "Gemfile", "gem 'rails-i18n'\n",
@@ -65,6 +65,7 @@ gems_to_comment << 'sqlite3'
 inject_into_file "Gemfile", %{
 # deploy to a postgres database
 gem 'pg'
+
 }, after: "gem 'rails-i18n'\n"
 remove_file 'config/database.yml'
 copy_file 'config/database/postgresql.yml', 'config/database.yml'
