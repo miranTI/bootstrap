@@ -27,18 +27,19 @@ def add_javascript_library(name)
     "\n//= require #{name}", before: "\n//= require_tree ."
 end
 
-# Prefer imports to expose Sass mixins
-gsub_file 'app/assets/stylesheets/application.css', 'require_tree .', 'require imports'
-create_file 'app/assets/stylesheets/imports.css.sass'
+remove_file 'app/assets/stylesheets/application.css'
+create_file 'app/assets/stylesheets/application.css.sass'
 
 # Sass Bootstrap
 if yes? 'Would you like to use Sass-Bootstrap?'
   inject_into_file "Gemfile",
-    "gem 'bootstrap-sass', '~> 3.1.1'\n",
+    "gem 'bootstrap-sass', '~> 3.2.0'\n",
     after: "gem 'sass-rails', '~> 4.0.3'\n"
 
-  add_javascript_library :bootstrap
-  append_to_file 'app/assets/stylesheets/imports.css.sass', "@import 'bootstrap'"
+  add_javascript_library 'bootstrap-sprockets'
+
+  append_to_file 'app/assets/stylesheets/application.css.sass', "@import 'bootstrap-sprockets'"
+  append_to_file 'app/assets/stylesheets/application.css.sass', "@import 'bootstrap'"
 end
 
 # minitest and simplecov setups
