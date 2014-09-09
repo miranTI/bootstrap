@@ -147,15 +147,17 @@ git add: "."
 git commit: '-m "First commit!"'
 
 if deploy_to_heroku
-  app = "#{app_name.downcase}"
-  worker = "#{app}-worker"
-  run "heroku apps:create #{app}"
-  run "heroku apps:create #{worker} --remote worker"
-  %w{heroku worker}.each {|env| run "git push #{env} master" }
+  %w{stg prd}.each do |stage|
+    app = "#{app_name.downcase}-#{stage}"
+    worker = "#{app}-worker"
+    run "heroku apps:create #{app}    --remote #{stage}"
+    run "heroku apps:create #{worker} --remote #{stage}w"
+    [stage, "#{stage}w"].each {|env| run "git push #{env} master" }
 
-  run "heroku addons:add pgbackups:auto-month --app #{app}"
+    run "heroku addons:add pgbackups:auto-month --app #{app}"
 
-  run "url=$(heroku config --app #{app} | grep DATABASE_URL | sed 's/^.*postgres/postgres/') ; heroku config:add DATABASE_URL=$url --app #{worker} "
-  run "heroku ps:scale web=1 worker=0 --app #{app}"
-  run "heroku ps:scale web=0 worker=1 --app #{worker}"
+    run "url=$(heroku config --app #{app} | grep DATABASE_URL | sed 's/^.*postgres/postgres/') ; heroku config:add DATABASE_URL=$url --app #{worker} "
+    run "heroku ps:scale web=1 worker=0 --app #{app}"
+    run "heroku ps:scale web=0 worker=1 --app #{worker}"
+  end
 end
