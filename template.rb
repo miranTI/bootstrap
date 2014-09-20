@@ -42,12 +42,36 @@ if yes? 'Would you like to use Sass-Bootstrap?'
   append_to_file 'app/assets/stylesheets/application.css.sass', "@import 'bootstrap'"
 end
 
-# minitest and simplecov setups
-gem_group :development, :test do
-  gem 'minitest-rails', github: 'blowmage/minitest-rails'
+gsub_file 'Gemfile', "# Use debugger\n# gem 'debugger', group: [:development, :test]\n", ''
+
+development_test_gems = []
+test_gems             = []
+development_gems      = []
+production_gems       = []
+after_groups_adjusts  = []
+
+development_gems << Proc.new do
+  gem 'spring'
 end
 
-gem_group :test do
+after_groups_adjusts << Proc.new do
+  gsub_file 'Gemfile',
+%{# Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+gem 'spring',        group: :development
+}, ''
+
+  inject_into_file "Gemfile",
+%{# Spring speeds up development by keeping your application running in the background.
+  # Read more: https://github.com/rails/spring
+  }, before: 'gem "spring"'
+end
+
+development_test_gems << Proc.new do
+  gem 'minitest-rails', github: 'blowmage/minitest-rails'
+  gem 'byebug'
+end
+
+test_gems << Proc.new do
   gem 'simplecov'
 end
 
@@ -78,25 +102,58 @@ if deploy_to_heroku
   copy_file 'config/unicorn.rb', 'config/unicorn.rb'
   copy_file 'config/Procfile', 'Procfile'
 
+  gsub_file 'Gemfile', "# Use unicorn as the app server\n", ''
+  gsub_file 'Gemfile', "# gem 'unicorn'\n", ''
+
+  development_gems << Proc.new do
+    gem 'rack-handlers'
+  end
+
+  production_gems << Proc.new do
+    gem 'unicorn'
+    gem 'rails_12factor'
+  end
+
+  after_groups_adjusts << Proc.new do
   inject_into_file "Gemfile", %{
-# https://devcenter.heroku.com/articles/dynos
-# https://devcenter.heroku.com/articles/rails-unicorn}, after: "# Use unicorn as the app server"
+  # http://stackoverflow.com/questions/15858887/how-can-i-use-unicorn-as-rails-s
+  }, before: 'gem "rack-handlers"'
 
-  gsub_file 'Gemfile', /# gem 'unicorn'/, "gem 'unicorn'"
+  gsub_file 'Gemfile', 'gem "rack-handlers"', '# gem "rack-handlers"'
+
+  inject_into_file "Gemfile",
+%{# https://devcenter.heroku.com/articles/dynos
+  # https://devcenter.heroku.com/articles/rails-unicorn
+  }, before: 'gem "unicorn"'
 
   inject_into_file "Gemfile", %{
-# http://stackoverflow.com/questions/15858887/how-can-i-use-unicorn-as-rails-s
-gem 'rack-handlers'
-
-# https://devcenter.heroku.com/articles/rails-integration-gems
-gem 'rails_12factor', group: :production
-}, after: "gem 'unicorn'\n"
+  # https://devcenter.heroku.com/articles/rails-integration-gems
+  }, before: 'gem "rails_12factor"'
+  end
 end
 
 # comments out disabled gems
 gems_to_comment.each do |gem|
   gsub_file 'Gemfile', /\w*(gem '#{gem}')/, '# \1'
 end
+
+gem_group :development, :test do
+  development_test_gems.each &:call
+end
+
+gem_group :development do
+  development_gems.each &:call
+end
+
+gem_group :test do
+  test_gems.each &:call
+end
+
+gem_group :production do
+  production_gems.each &:call
+end
+
+after_groups_adjusts.each &:call
 
 # run bundle install before generators
 run 'bundle install'
