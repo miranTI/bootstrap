@@ -33,16 +33,14 @@ create_file 'app/assets/stylesheets/application.css.sass'
 # Sass Bootstrap
 if yes? 'Would you like to use Sass-Bootstrap?'
   inject_into_file "Gemfile",
-    "gem 'bootstrap-sass', '~> 3.2.0'\n",
-    after: "gem 'sass-rails', '~> 4.0.3'\n"
+    "gem 'bootstrap-sass'\n",
+    before: "# Use Uglifier"
 
   add_javascript_library 'bootstrap-sprockets'
 
   append_to_file 'app/assets/stylesheets/application.css.sass', "@import 'bootstrap-sprockets'\n"
   append_to_file 'app/assets/stylesheets/application.css.sass', "@import 'bootstrap'"
 end
-
-gsub_file 'Gemfile', "# Use debugger\n# gem 'debugger', group: [:development, :test]\n", ''
 
 development_test_gems = []
 test_gems             = []
@@ -68,7 +66,6 @@ end
 
 development_test_gems << Proc.new do
   gem 'minitest-rails', github: 'blowmage/minitest-rails'
-  gem 'byebug'
 end
 
 test_gems << Proc.new do
@@ -102,7 +99,7 @@ if deploy_to_heroku
   copy_file 'config/unicorn.rb', 'config/unicorn.rb'
   copy_file 'config/Procfile', 'Procfile'
 
-  gsub_file 'Gemfile', "# Use unicorn as the app server\n", ''
+  gsub_file 'Gemfile', "# Use Unicorn as the app server\n", ''
   gsub_file 'Gemfile', "# gem 'unicorn'\n", ''
 
   development_gems << Proc.new do
@@ -115,20 +112,20 @@ if deploy_to_heroku
   end
 
   after_groups_adjusts << Proc.new do
-  inject_into_file "Gemfile", %{
-  # http://stackoverflow.com/questions/15858887/how-can-i-use-unicorn-as-rails-s
-  }, before: 'gem "rack-handlers"'
+  inject_into_file "Gemfile",
+  %{# http://stackoverflow.com/questions/15858887/how-can-i-use-unicorn-as-rails-s
+  }, before: "gem 'rack-handlers'"
 
   gsub_file 'Gemfile', 'gem "rack-handlers"', '# gem "rack-handlers"'
 
   inject_into_file "Gemfile",
 %{# https://devcenter.heroku.com/articles/dynos
   # https://devcenter.heroku.com/articles/rails-unicorn
-  }, before: 'gem "unicorn"'
+  }, before: "gem 'unicorn'"
 
   inject_into_file "Gemfile", %{
   # https://devcenter.heroku.com/articles/rails-integration-gems
-  }, before: 'gem "rails_12factor"'
+  }, before: "gem 'rails_12factor'"
   end
 end
 
@@ -197,7 +194,8 @@ empty_directory 'vagrant'
 run 'vagrant up'
 
 rake 'db:create'
-rake 'minitest:all:quick'
+rake 'db:migrate'
+rake 'test'
 
 git :init
 git add: "."
