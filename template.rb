@@ -38,7 +38,7 @@ if yes? 'Would you like to use Sass-Bootstrap?'
 
   add_javascript_library 'bootstrap-sprockets'
 
-  append_to_file 'app/assets/stylesheets/application.css.sass', "@import 'bootstrap-sprockets'"
+  append_to_file 'app/assets/stylesheets/application.css.sass', "@import 'bootstrap-sprockets'\n"
   append_to_file 'app/assets/stylesheets/application.css.sass', "@import 'bootstrap'"
 end
 
