@@ -134,6 +134,23 @@ gems_to_comment.each do |gem|
   gsub_file 'Gemfile', /\w*(gem '#{gem}')/, '# \1'
 end
 
+# Configures ActionMailer with Mandrill
+inject_into_file 'config/environments/production.rb', %{
+  config.action_mailer.smtp_settings = {
+    address:              "smtp.mandrillapp.com",
+    authentication:       'login', # Mandrill supports 'plain' or 'login'
+    enable_starttls_auto: true,   # detects and uses STARTTLS
+    port:                 587,    # ports 587 and 2525 are also supported with STARTTLS
+    user_name:            Rails.application.secrets.mandrill_user,
+    password:             Rails.application.secrets.mandrill_pass # SMTP password is any valid API key
+  }
+}, before: /end$/
+
+append_to_file 'config/secrets.yml', %{
+  mandrill_user:  <%= ENV["MANDRILL_USER"] %>
+  mandrill_pass:  <%= ENV["MANDRILL_PASS"] %>
+}
+
 # Configures exception notification
 inject_into_file 'config/environments/production.rb', %{
   config.middleware.use ExceptionNotification::Rack,
