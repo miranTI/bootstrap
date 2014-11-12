@@ -134,6 +134,26 @@ gems_to_comment.each do |gem|
   gsub_file 'Gemfile', /\w*(gem '#{gem}')/, '# \1'
 end
 
+# Configures exception notification
+inject_into_file 'config/environments/production.rb', %{
+  config.middleware.use ExceptionNotification::Rack,
+    email: {
+      email_prefix:         Rails.application.secrets.exception_notifier_prefix,
+      sender_address:       Rails.application.secrets.exception_notifier_sender,
+      exception_recipients: Rails.application.secrets.exception_notifier_recipients.to_s.split(',')
+    },
+    slack: {
+      webhook_url: Rails.application.secrets.exception_notifier_slack_url
+    }
+}, before: /end$/
+
+append_to_file 'config/secrets.yml', %{
+  exception_notifier_prefix:      <%= ENV["EXCEPTION_NOTIFIER_PREFIX"]      %>
+  exception_notifier_sender:      <%= ENV["EXCEPTION_NOTIFIER_SENDER"]      %>
+  exception_notifier_recipients:  <%= ENV["EXCEPTION_NOTIFIER_RECIPIENTS"]  %>
+  exception_notifier_slack_url:   <%= ENV["EXCEPTION_NOTIFIER_SLACK_URL"]   %>
+}
+
 gem_group :development, :test do
   development_test_gems.each &:call
 end
@@ -148,6 +168,9 @@ end
 
 gem_group :production do
   production_gems.each &:call
+
+  gem 'exception_notification', github: 'smartinez87/exception_notification'
+  gem 'slack-notifier'
 end
 
 after_groups_adjusts.each &:call
