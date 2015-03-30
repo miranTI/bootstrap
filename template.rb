@@ -98,12 +98,14 @@ if deploy_to_heroku
   end
 
   after_groups_adjusts << Proc.new do
-    inject_into_file "Gemfile",
-%{# https://devcenter.heroku.com/articles/dynos
-  # https://devcenter.heroku.com/articles/rails-unicorn}, before: "gem 'unicorn'"
+    inject_into_file "Gemfile", %{
+  # https://devcenter.heroku.com/articles/dynos
+  # https://devcenter.heroku.com/articles/rails-unicorn
+  }, before: "gem 'unicorn'"
 
-    inject_into_file "Gemfile",
-%{# https://devcenter.heroku.com/articles/rails-integration-gems}, before: "gem 'rails_12factor'"
+    inject_into_file "Gemfile", %{
+  # https://devcenter.heroku.com/articles/rails-integration-gems
+  }, before: "gem 'rails_12factor'"
   end
 end
 
@@ -162,10 +164,10 @@ gem_group :test do
 end
 
 gem_group :production do
-  production_gems.each &:call
-
   gem 'exception_notification', github: 'smartinez87/exception_notification'
   gem 'slack-notifier'
+
+  production_gems.each &:call
 end
 
 after_groups_adjusts.each &:call
