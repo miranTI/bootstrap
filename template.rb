@@ -42,15 +42,9 @@ if yes? 'Would you like to use Sass-Bootstrap?'
   append_to_file 'app/assets/stylesheets/application.css.sass', "@import 'bootstrap'"
 end
 
-development_test_gems = []
 test_gems             = []
-development_gems      = []
 production_gems       = []
 after_groups_adjusts  = []
-
-development_gems << Proc.new do
-  gem 'spring'
-end
 
 after_groups_adjusts << Proc.new do
   gsub_file 'Gemfile',
@@ -62,10 +56,6 @@ gem 'spring',        group: :development
 %{# Spring speeds up development by keeping your application running in the background.
   # Read more: https://github.com/rails/spring
   }, before: 'gem "spring"'
-end
-
-development_test_gems << Proc.new do
-  gem 'minitest-rails', github: 'blowmage/minitest-rails'
 end
 
 test_gems << Proc.new do
@@ -159,13 +149,13 @@ append_to_file 'config/secrets.yml', %{
   exception_notifier_slack_url:   <%= ENV["EXCEPTION_NOTIFIER_SLACK_URL"]   %>
 }
 
-gem_group :development, :test do
-  development_test_gems.each &:call
-end
+inject_into_file "Gemfile",
+%{  # Minitest integration for Rails 4.1+
+  gem 'minitest-rails', github: 'blowmage/minitest-rails'
 
-gem_group :development do
-  development_gems.each &:call
-end
+  # custom minitest matchers
+  gem 'minime', github: 'fabiolnm/minime'\n
+}, after: "group :development, :test do\n"
 
 gem_group :test do
   test_gems.each &:call
