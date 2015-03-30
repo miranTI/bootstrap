@@ -102,30 +102,18 @@ if deploy_to_heroku
   gsub_file 'Gemfile', "# Use Unicorn as the app server\n", ''
   gsub_file 'Gemfile', "# gem 'unicorn'\n", ''
 
-  development_gems << Proc.new do
-    gem 'rack-handlers'
-  end
-
   production_gems << Proc.new do
     gem 'unicorn'
     gem 'rails_12factor'
   end
 
   after_groups_adjusts << Proc.new do
-  inject_into_file "Gemfile",
-  %{# http://stackoverflow.com/questions/15858887/how-can-i-use-unicorn-as-rails-s
-  }, before: "gem 'rack-handlers'"
-
-  gsub_file 'Gemfile', 'gem "rack-handlers"', '# gem "rack-handlers"'
-
-  inject_into_file "Gemfile",
+    inject_into_file "Gemfile",
 %{# https://devcenter.heroku.com/articles/dynos
-  # https://devcenter.heroku.com/articles/rails-unicorn
-  }, before: "gem 'unicorn'"
+  # https://devcenter.heroku.com/articles/rails-unicorn}, before: "gem 'unicorn'"
 
-  inject_into_file "Gemfile", %{
-  # https://devcenter.heroku.com/articles/rails-integration-gems
-  }, before: "gem 'rails_12factor'"
+    inject_into_file "Gemfile",
+%{# https://devcenter.heroku.com/articles/rails-integration-gems}, before: "gem 'rails_12factor'"
   end
 end
 
