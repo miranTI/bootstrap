@@ -241,7 +241,7 @@ if deploy_to_heroku
     run "heroku addons:add pgbackups:auto-month --app #{app}"
 
     # run "url=$(heroku config --app #{app} | grep DATABASE_URL | sed 's/^.*postgres/postgres/') ; heroku config:add DATABASE_URL=$url --app #{worker} "
-    run "heroku ps:scale web=1 worker=0 --app #{app}"
+    run "heroku ps:scale web=1 worker=1 --app #{app}"
     # run "heroku ps:scale web=0 worker=1 --app #{worker}"
   end
 end
