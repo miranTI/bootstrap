@@ -121,8 +121,8 @@ inject_into_file 'config/environments/production.rb', %{
     authentication:       'login', # Mandrill supports 'plain' or 'login'
     enable_starttls_auto: true,   # detects and uses STARTTLS
     port:                 587,    # ports 587 and 2525 are also supported with STARTTLS
-    user_name:            Rails.application.secrets.mandrill_user,
-    password:             Rails.application.secrets.mandrill_pass # SMTP password is any valid API key
+    user_name:            secrets.mandrill_user,
+    password:             secrets.mandrill_pass # SMTP password is any valid API key
   }
 }, before: /end$/
 
@@ -135,12 +135,12 @@ append_to_file 'config/secrets.yml', %{
 inject_into_file 'config/environments/production.rb', %{
   config.middleware.use ExceptionNotification::Rack,
     email: {
-      email_prefix:         Rails.application.secrets.exception_notifier_prefix,
-      sender_address:       Rails.application.secrets.exception_notifier_sender,
-      exception_recipients: Rails.application.secrets.exception_notifier_recipients.to_s.split(',')
+      email_prefix:         secrets.exception_notifier_prefix,
+      sender_address:       secrets.exception_notifier_sender,
+      exception_recipients: secrets.exception_notifier_recipients.to_s.split(',')
     },
     slack: {
-      webhook_url: Rails.application.secrets.exception_notifier_slack_url
+      webhook_url: secrets.exception_notifier_slack_url
     }
 }, before: /end$/
 
