@@ -228,26 +228,14 @@ git add: "."
 git commit: '-m "First commit!"'
 
 if deploy_to_heroku
-  # run "heroku plugins:install git://github.com/heroku/heroku-pg-extras.git"
-
-  # Evolve to use new beta Heroku dynos which includes free worker dynos
   %w{stg prd}.each do |stage|
     app = "#{app_name.downcase}-#{stage}"
 
-    # worker = "#{app}-worker"
     run "heroku apps:create #{app} --remote #{stage}"
-
-    # run "heroku apps:create #{worker} --remote #{stage}w"
-    #[stage, "#{stage}w"].each {|env|
     run "git push #{stage} master"
-
-    #}
-
-    # run "heroku pg:backups schedule DATABASE_URL --app #{app}"
-    run "heroku addons:add pgbackups:auto-month --app #{app}"
-
-    # run "url=$(heroku config --app #{app} | grep DATABASE_URL | sed 's/^.*postgres/postgres/') ; heroku config:add DATABASE_URL=$url --app #{worker} "
     run "heroku ps:scale web=1 worker=1 --app #{app}"
-    # run "heroku ps:scale web=0 worker=1 --app #{worker}"
+
+    run "heroku run rake db:migrate --app #{app}"
+    run "heroku pg:backups schedule --at '00:00 America/Sao_Paulo' --app #{app}"
   end
 end
