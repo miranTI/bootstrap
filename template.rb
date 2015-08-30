@@ -239,7 +239,7 @@ if deploy_to_heroku
 
     # run "heroku apps:create #{worker} --remote #{stage}w"
     #[stage, "#{stage}w"].each {|env|
-    run "git push #{env} master"
+    run "git push #{stage} master"
 
     #}
 
