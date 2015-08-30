@@ -237,5 +237,8 @@ if deploy_to_heroku
 
     run "heroku run rake db:migrate --app #{app}"
     run "heroku pg:backups schedule --at '00:00 America/Sao_Paulo' --app #{app}"
+
+    # GENERATE TOKEN AT https://miranti.hipchat.com/admin/api
+    # heroku addons:create deployhooks:hipchat --auth_token=tokrn --room=dev --message="{{user}} deployed {{app}}\r\n{{url}}\r\n{{git_log}}" --app vcurso-stg
   end
 end
