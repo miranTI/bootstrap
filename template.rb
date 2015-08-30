@@ -132,6 +132,9 @@ append_to_file 'config/secrets.yml', %{
 }
 
 # Configures exception notification
+#slack: {
+  #webhook_url: secrets.exception_notifier_slack_url
+#}
 inject_into_file 'config/environments/production.rb', %{
   config.middleware.use ExceptionNotification::Rack,
     email: {
@@ -139,21 +142,23 @@ inject_into_file 'config/environments/production.rb', %{
       sender_address:       secrets.exception_notifier_sender,
       exception_recipients: secrets.exception_notifier_recipients.to_s.split(',')
     },
-    slack: {
-      webhook_url: secrets.exception_notifier_slack_url
+    hipchat: {
+      api_token: secrets.exception_notifier_hipchat_token,
+      room_name: secrets.exception_notifier_hipchat_room
     }
 }, before: /end$/
 
+# exception_notifier_slack_url:   <%= ENV["EXCEPTION_NOTIFIER_SLACK_URL"]   %>
 append_to_file 'config/secrets.yml', %{
-  exception_notifier_prefix:      <%= ENV["EXCEPTION_NOTIFIER_PREFIX"]      %>
-  exception_notifier_sender:      <%= ENV["EXCEPTION_NOTIFIER_SENDER"]      %>
-  exception_notifier_recipients:  <%= ENV["EXCEPTION_NOTIFIER_RECIPIENTS"]  %>
-  exception_notifier_slack_url:   <%= ENV["EXCEPTION_NOTIFIER_SLACK_URL"]   %>
+  exception_notifier_prefix:        <%= ENV["EXCEPTION_NOTIFIER_PREFIX"]        %>
+  exception_notifier_sender:        <%= ENV["EXCEPTION_NOTIFIER_SENDER"]        %>
+  exception_notifier_recipients:    <%= ENV["EXCEPTION_NOTIFIER_RECIPIENTS"]    %>
+  exception_notifier_hipchat_token: <%= ENV["EXCEPTION_NOTIFIER_HIPCHAT_ROOM"]  %>
+  exception_notifier_hipchat_room:  <%= ENV["EXCEPTION_NOTIFIER_HIPCHAT_TOKEN"] %>
 }
 
 inject_into_file "Gemfile",
-%{  # Minitest integration for Rails 4.1+
-  gem 'minitest-rails', github: 'blowmage/minitest-rails'
+%{  gem 'minitest-rails'
 
   # custom minitest matchers
   gem 'minime', github: 'fabiolnm/minime'\n
@@ -165,7 +170,8 @@ end
 
 gem_group :production do
   gem 'exception_notification', github: 'smartinez87/exception_notification'
-  gem 'slack-notifier'
+  gem 'hipchat'
+  # gem 'slack-notifier'
 
   production_gems.each &:call
 end
